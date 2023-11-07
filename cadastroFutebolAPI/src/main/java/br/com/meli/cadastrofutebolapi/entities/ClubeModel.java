@@ -16,9 +16,8 @@ public class ClubeModel {
     @Column(name = "nome", unique = true)
     private String nomeClube;
 
-    @Column(name = "estadios")
     @ManyToOne
-    @JoinColumn(name = "estadio_id")
+    @JoinColumn(name = "id_estadio")
     private EstadioModel estadioClube;
 
     @Column(name = "cidade")

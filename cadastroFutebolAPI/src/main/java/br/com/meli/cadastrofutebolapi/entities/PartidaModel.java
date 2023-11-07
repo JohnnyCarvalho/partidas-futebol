@@ -13,17 +13,14 @@ public class PartidaModel {
     @Column(name = "id")
     private Long idPartidas;
 
-    @Column(name = "clube_1")
     @ManyToOne
-    @JoinColumn(name = "clube_id")
+    @JoinColumn(name = "id_clube_1")
     private ClubeModel clube1;
 
-    @Column(name = "clube_2")
     @ManyToOne
-    @JoinColumn(name = "clube_id")
+    @JoinColumn(name = "id_clube_2")
     private ClubeModel clube2;
 
-    @Column(name = "estadio_jogo")
     @OneToOne
     @JoinColumn(name = "id_estadio")
     private EstadioModel estadioPartida;
@@ -36,5 +33,4 @@ public class PartidaModel {
 
     @Column(name = "gols_clube_2")
     private int golsClube2;
-
 }
