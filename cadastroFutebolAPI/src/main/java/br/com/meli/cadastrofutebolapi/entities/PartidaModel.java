@@ -26,7 +26,7 @@ public class PartidaModel {
     @Column(name = "estadio_jogo")
     @OneToOne
     @JoinColumn(name = "id_estadio")
-    private EstadioModel estadioJogo;
+    private EstadioModel estadioPartida;
 
     @Column(name = "data_jogo")
     private String dataPartida;

@@ -14,13 +14,13 @@ public class ClubeModel {
     private Long id;
 
     @Column(name = "nome", unique = true)
-    private String nome;
+    private String nomeClube;
 
     @Column(name = "estadios")
     @ManyToOne
     @JoinColumn(name = "estadio_id")
-    private EstadioModel estadio;
+    private EstadioModel estadioClube;
 
     @Column(name = "cidade")
-    private String cidade;
+    private String cidadeClube;
 }

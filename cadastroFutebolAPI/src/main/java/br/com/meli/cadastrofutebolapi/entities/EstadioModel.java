@@ -8,8 +8,16 @@ import lombok.Data;
 public class EstadioModel {
 
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idEstadio;
-    private String nome;
-    private String cidade;
-    private double capacidade;
+
+    @Column(name = "nome", unique = true)
+    private String nomeEstadio;
+
+    @Column(name = "cidade")
+    private String cidadeEstadio;
+
+    @Column(name = "capacidade")
+    private double capacidadeEstadio;
 }
