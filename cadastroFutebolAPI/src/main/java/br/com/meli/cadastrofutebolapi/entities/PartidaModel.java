@@ -23,6 +23,11 @@ public class PartidaModel {
     @JoinColumn(name = "clube_id")
     private ClubeModel clube2;
 
+    @Column(name = "estadio_jogo")
+    @OneToOne
+    @JoinColumn(name = "id_estadio")
+    private EstadioModel estadioJogo;
+
     @Column(name = "data_jogo")
     private String dataPartida;
 
@@ -31,6 +36,5 @@ public class PartidaModel {
 
     @Column(name = "gols_clube_2")
     private int golsClube2;
-
 
 }
