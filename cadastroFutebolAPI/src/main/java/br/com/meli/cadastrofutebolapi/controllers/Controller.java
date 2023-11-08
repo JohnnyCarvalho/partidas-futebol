@@ -30,7 +30,7 @@ public class Controller {
     }
 
     @PutMapping(value = "/{id}")
-    public String putPartida(@PathVariable Long id, @RequestBody PartidaDto partidaDto) {
+    public ResponseEntity<String> putPartida(@PathVariable Long id, @RequestBody PartidaDto partidaDto) {
         String response = partidaServices.put(id, partidaDto);
         return new ResponseEntity<>(response, HttpStatus.OK).getBody();
     }
