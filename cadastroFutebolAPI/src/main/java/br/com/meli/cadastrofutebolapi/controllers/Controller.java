@@ -24,7 +24,7 @@ public class Controller {
     @GetMapping
     public List<Partida> getPartida() {
         List<Partida> response = partidaServices.get();
-        return response;
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}")
