@@ -5,17 +5,15 @@ import lombok.Data;
 @Data
 public class PartidaDto {
 
-    //private Long id;
+    private String clubeMandante;
 
-    private String clube_mandante;
-
-    private String clube_visitante;
+    private String clubeVisitante;
 
     private String estadio;
 
     private String data;
 
-    private int gols_clube_mandante;
+    private int golsClubeMandante;
 
-    private int gols_clube_visitante;
+    private int golsClubeVisitante;
 }

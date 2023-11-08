@@ -17,13 +17,26 @@ public class Controller {
 
     @PostMapping
     public String postPartida(@RequestBody PartidaDto partidaDto) {
-        String response = partidaServices.postPartida(partidaDto);
+        String response = partidaServices.post(partidaDto);
         return response;
     }
 
     @GetMapping
     public List<Partida> getPartida() {
-        List<Partida> response = partidaServices.getPartida();
+        List<Partida> response = partidaServices.get();
         return response;
     }
+
+    @PutMapping(value = "/{id}")
+    public String putPartida(@PathVariable Long id, @RequestBody PartidaDto partidaDto) {
+        String response = partidaServices.put(id, partidaDto);
+        return response;
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public String deletePartida(@PathVariable Long id) {
+        String response = partidaServices.delete(id);
+        return response;
+    }
+
 }

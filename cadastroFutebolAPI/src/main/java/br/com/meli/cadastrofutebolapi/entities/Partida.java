@@ -13,11 +13,11 @@ public class Partida {
     @Column
     private Long id;
 
-    @Column
-    private String clube_mandante;
+    @Column(name = "clube_mandante")
+    private String clubeMandante;
 
-    @Column
-    private String clube_visitante;
+    @Column(name = "clube_visitante")
+    private String clubeVisitante;
 
     @Column
     private String estadio;
@@ -25,9 +25,9 @@ public class Partida {
     @Column
     private String data;
 
-    @Column
-    private int gols_clube_mandante;
+    @Column(name = "gols_clube_mandante")
+    private int golsClubeMandante;
 
-    @Column
-    private int gols_clube_visitante;
+    @Column(name = "gols_clube_visitante")
+    private int golsClubeVisitante;
 }
