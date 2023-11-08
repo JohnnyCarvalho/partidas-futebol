@@ -30,4 +30,8 @@ public class PartidaServices {
         return "Partida registrada com sucesso!";
 
     }
+
+    public List<Partida> getPartida() {
+        return partidaRepository.findAll();
+    }
 }
