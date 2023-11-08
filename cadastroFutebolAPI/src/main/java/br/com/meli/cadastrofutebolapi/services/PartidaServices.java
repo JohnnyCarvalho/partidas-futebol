@@ -4,11 +4,11 @@ import br.com.meli.cadastrofutebolapi.dto.PartidaDto;
 import br.com.meli.cadastrofutebolapi.entities.Partida;
 import br.com.meli.cadastrofutebolapi.repositories.PartidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -16,17 +16,21 @@ public class PartidaServices {
 
     @Autowired
     private PartidaRepository partidaRepository;
+    Partida partida = new Partida();
+
     public String post(PartidaDto partidaDto) {
 
-        Partida partida = new Partida();
-        Object result = objetoModelo(partida, partidaDto);
+        Partida result = mapDtoToEntity(partidaDto, partida);
+
+        partidaRepository.save(result);
 
         if (result != null) {
             return "Partida registrada com sucesso!";
         }
-        return "Erro ao registrar a partida!";
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
-    public Object objetoModelo(Partida partida, PartidaDto partidaDto) {
+
+    public Partida mapDtoToEntity(PartidaDto partidaDto, Partida partida) {
         partida.setClubeMandante(partidaDto.getClubeMandante());
         partida.setClubeVisitante(partidaDto.getClubeVisitante());
         partida.setData(partidaDto.getData());
@@ -34,11 +38,13 @@ public class PartidaServices {
         partida.setGolsClubeMandante(partidaDto.getGolsClubeMandante());
         partida.setGolsClubeVisitante(partidaDto.getGolsClubeVisitante());
 
-        return partidaRepository.save(partida);
+        return partida;
     }
+
     public List<Partida> get() {
         return partidaRepository.findAll();
     }
+
     public String put(Long id, PartidaDto partidaDto) {
 
         Optional<Partida> response = partidaRepository.findById(id);
@@ -46,13 +52,14 @@ public class PartidaServices {
         if (response.isPresent()) {
             Partida novaPartida = response.get();
 
-            objetoModelo(novaPartida, partidaDto);
+            Partida result = mapDtoToEntity(partidaDto, novaPartida);
 
-            partidaRepository.save(novaPartida);
+            partidaRepository.save(result);
             return "Partida atualizada com sucesso!";
         }
-        return "";
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
+
     public String delete(Long id) {
 
         System.out.println("ID: " + id);
@@ -61,6 +68,6 @@ public class PartidaServices {
             partidaRepository.deleteById(id);
             return "Partida deletada com sucesso!";
         }
-        return "Partida não existe!";
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }
