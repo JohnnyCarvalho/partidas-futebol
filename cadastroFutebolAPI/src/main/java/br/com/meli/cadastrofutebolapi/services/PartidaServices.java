@@ -51,7 +51,7 @@ public class PartidaServices {
             partidaRepository.save(novaPartida);
             return "Partida atualizada com sucesso!";
         }
-        return "Partida não encontrada!";
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
     public String delete(Long id) {
 
