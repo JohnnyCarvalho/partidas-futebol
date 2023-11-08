@@ -18,9 +18,9 @@ public class Controller {
     private PartidaServices partidaServices;
 
     @PostMapping
-    public String postPartida(@RequestBody PartidaDto partidaDto) {
+    public ResponseEntity<String> postPartida(@RequestBody PartidaDto partidaDto) {
         String response = partidaServices.post(partidaDto);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping
@@ -32,13 +32,13 @@ public class Controller {
     @PutMapping(value = "/{id}")
     public ResponseEntity<String> putPartida(@PathVariable Long id, @RequestBody PartidaDto partidaDto) {
         String response = partidaServices.put(id, partidaDto);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    public String deletePartida(@PathVariable Long id) {
+    public ResponseEntity<String> deletePartida(@PathVariable Long id) {
         String response = partidaServices.delete(id);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

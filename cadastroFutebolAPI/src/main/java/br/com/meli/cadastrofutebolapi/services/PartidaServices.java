@@ -23,11 +23,7 @@ public class PartidaServices {
         Partida result = mapDtoToEntity(partidaDto, partida);
 
         partidaRepository.save(result);
-
-        if (result != null) {
-            return "Partida registrada com sucesso!";
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return "Partida registrada com sucesso!";
     }
 
     public Partida mapDtoToEntity(PartidaDto partidaDto, Partida partida) {
