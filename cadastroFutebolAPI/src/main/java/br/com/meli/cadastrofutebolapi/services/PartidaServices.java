@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +62,9 @@ public class PartidaServices {
             case "goleada":
                 return getThrashed();
 
+            case "zerogols":
+                return getZeroGoals();
+
             default:
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -85,5 +89,11 @@ public class PartidaServices {
                 Math.abs((list.getGolsClubeMandante() - list.getGolsClubeVisitante())) >= 3
                 ).collect(Collectors.toList());
 
+    }
+
+    public List<Partida> getZeroGoals() {
+        return partidaRepository.findAll().stream().filter(list ->
+                Math.abs((list.getGolsClubeMandante() + list.getGolsClubeVisitante())) == 0
+        ).collect(Collectors.toList());
     }
 }
