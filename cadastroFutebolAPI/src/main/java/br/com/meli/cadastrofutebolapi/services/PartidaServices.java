@@ -82,7 +82,8 @@ public class PartidaServices {
     public List<Partida> getThrashed() {
 
         return partidaRepository.findAll().stream().filter(list ->
-                (list.getGolsClubeMandante() - list.getGolsClubeVisitante()) >= 3
+                (list.getGolsClubeMandante() - list.getGolsClubeVisitante()) >= 3 ||
+                        (list.getGolsClubeVisitante() - list.getGolsClubeMandante()) >= 3
                 ).collect(Collectors.toList());
 
     }
