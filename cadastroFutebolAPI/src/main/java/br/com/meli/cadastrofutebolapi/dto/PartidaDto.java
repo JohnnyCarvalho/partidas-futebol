@@ -2,7 +2,7 @@ package br.com.meli.cadastrofutebolapi.dto;
 
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class PartidaDto {
@@ -13,7 +13,7 @@ public class PartidaDto {
 
     private String estadio;
 
-    private LocalDate data;
+    private LocalDateTime data;
 
     private int golsClubeMandante;
 

@@ -3,7 +3,7 @@ package br.com.meli.cadastrofutebolapi.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -25,7 +25,7 @@ public class Partida {
     private String estadio;
 
     @Column
-    private LocalDate data;
+    private LocalDateTime data;
 
     @Column(name = "gols_clube_mandante")
     private int golsClubeMandante;
