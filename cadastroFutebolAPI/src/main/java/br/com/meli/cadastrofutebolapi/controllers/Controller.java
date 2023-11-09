@@ -23,9 +23,9 @@ public class Controller {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping
-    public List<Partida> getPartida() {
-        List<Partida> response = partidaServices.get();
+    @GetMapping(value = "/{filter}")
+    public List<Partida> getPartida(@PathVariable String filter) {
+        List<Partida> response = partidaServices.getFiltered(filter);
         return new ResponseEntity<>(response, HttpStatus.OK).getBody();
     }
 

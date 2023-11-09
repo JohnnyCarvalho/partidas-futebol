@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PartidaServices {
@@ -37,10 +38,6 @@ public class PartidaServices {
         return partida;
     }
 
-    public List<Partida> get() {
-        return partidaRepository.findAll();
-    }
-
     public String put(Long id, PartidaDto partidaDto) {
 
         Optional<Partida> response = partidaRepository.findById(id);
@@ -56,14 +53,37 @@ public class PartidaServices {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public String delete(Long id) {
+    public List<Partida> getFiltered(String filter) {
+        switch (filter) {
+            case "all":
+                return getAllMatch();
 
-        System.out.println("ID: " + id);
+            case "goleada":
+                return getThrashed();
+
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public String delete(Long id) {
 
         if (partidaRepository.existsById(id)) {
             partidaRepository.deleteById(id);
             return "Partida deletada com sucesso!";
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    public List<Partida> getAllMatch() {
+        return partidaRepository.findAll();
+    }
+
+    public List<Partida> getThrashed() {
+
+        return partidaRepository.findAll().stream().filter(list ->
+                (list.getGolsClubeMandante() - list.getGolsClubeVisitante()) >= 3
+                ).collect(Collectors.toList());
+
     }
 }
