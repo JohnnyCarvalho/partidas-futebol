@@ -3,8 +3,11 @@ package br.com.meli.cadastrofutebolapi.services;
 import br.com.meli.cadastrofutebolapi.dto.MatchDto;
 import br.com.meli.cadastrofutebolapi.entities.SoccerMatch;
 import br.com.meli.cadastrofutebolapi.repositories.MatchRepository;
+import jakarta.validation.ValidationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +29,10 @@ public class MatchServices {
         if (!verifyRegisterTime(matchDto)) {
             return "Horário deve ser entre 08:00am e 22:00pm!";
         }
+
+        if (!verifyMandatoryData(matchDto)) {
+            return "Os campos HomeTeam, VisitingTeam e Stadium não podem ser nulos ou vazios!";
+        }
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
         match.setDate(matchDto.getDate());
@@ -35,16 +42,27 @@ public class MatchServices {
 
         matchRepository.save(match);
         return "Partida registrada com sucesso!";
+
     }
 
     public boolean verifyRegisterTime(MatchDto matchDto) {
 
-        if ((matchDto.getDate().getHour() < 8 || (matchDto.getDate().getHour() >= 22 &&
-                (matchDto.getDate().getMinute() > 0 || matchDto.getDate().getSecond() > 0)))) {
+        if (matchDto.getDate() != null) {
+            if ((matchDto.getDate().getHour() < 8 || (matchDto.getDate().getHour() >= 22 &&
+                    (matchDto.getDate().getMinute() > 0 || matchDto.getDate().getSecond() > 0)))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean verifyMandatoryData(MatchDto matchDto) {
+        if (matchDto.getDate() == null || StringUtils.isAnyBlank(matchDto.getHomeTeam(), matchDto.getVisitingTeam(), matchDto.getStadium())) {
             return false;
         }
         return true;
     }
+
 
     public String put(Long id, MatchDto matchDto) {
 
@@ -54,6 +72,11 @@ public class MatchServices {
             if (!verifyRegisterTime(matchDto)) {
                 return "Horário deve ser entre 08:00am e 22:00pm!";
             }
+
+            if (!verifyMandatoryData(matchDto)) {
+                return "Os campos HomeTeam, VisitingTeam e Stadium não podem ser nulos ou vazios!";
+            }
+
             SoccerMatch newMatch = response.get();
             newMatch.setHomeTeam(matchDto.getHomeTeam());
             newMatch.setVisitingTeam(matchDto.getVisitingTeam());

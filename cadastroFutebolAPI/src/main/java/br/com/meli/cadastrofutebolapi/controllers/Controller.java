@@ -5,13 +5,15 @@ import br.com.meli.cadastrofutebolapi.entities.SoccerMatch;
 import br.com.meli.cadastrofutebolapi.services.MatchServices;
 import br.com.meli.cadastrofutebolapi.services.StadiumServices;
 import br.com.meli.cadastrofutebolapi.services.TeamServices;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Validated
 @RestController
 @RequestMapping("/partida")
 public class Controller {
@@ -46,13 +48,13 @@ public class Controller {
     }
 
     @PostMapping
-    public ResponseEntity<String> postMatch(@RequestBody MatchDto matchDto) {
+    public ResponseEntity<String> postMatch(@RequestBody @Valid MatchDto matchDto) {
         String response = matchServices.post(matchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<String> putMatch(@PathVariable Long id, @RequestBody MatchDto matchDto) {
+    public ResponseEntity<String> putMatch(@PathVariable Long id, @RequestBody @Valid MatchDto matchDto) {
         String response = matchServices.put(id, matchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
