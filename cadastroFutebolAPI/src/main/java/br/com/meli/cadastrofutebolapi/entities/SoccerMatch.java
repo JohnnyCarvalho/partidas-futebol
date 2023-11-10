@@ -1,0 +1,35 @@
+package br.com.meli.cadastrofutebolapi.entities;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Entity
+@Table
+public class SoccerMatch {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
+    private Long id;
+
+    @Column(name = "home_team")
+    private String homeTeam;
+
+    @Column(name = "visiting_team")
+    private String visitingTeam;
+
+    @Column
+    private String stadium;
+
+    @Column
+    private LocalDateTime date;
+
+    @Column(name = "goals_home_team")
+    private int goalsHomeTeam;
+
+    @Column(name = "goals_visiting_team")
+    private int goalsVisitingTeam;
+}
