@@ -13,4 +13,6 @@ public interface MatchRepository extends JpaRepository<SoccerMatch, Long> {
 
     public List<SoccerMatch> findAllByVisitingTeamEqualsIgnoreCase(String argument);
 
+    public List<SoccerMatch> findAllByStadiumEqualsIgnoreCase(String argument);
+
 }

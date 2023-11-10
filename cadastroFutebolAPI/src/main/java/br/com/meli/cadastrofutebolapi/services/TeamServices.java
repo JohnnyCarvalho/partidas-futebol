@@ -15,31 +15,31 @@ public class TeamServices {
     @Autowired
     private MatchRepository matchRepository;
 
-    public List<SoccerMatch> getFilteredByTeamOrStadium(String filter, String argument) {
+    public List<SoccerMatch> getFilteredByTeam(String filter, String team) {
         switch (filter) {
-            case "time":
-                return getAllByTeam(argument);
+            case "buscar-por-time":
+                return getAllByTeam(team);
 
             case "time-mandante":
-                return getHomeTeam(argument);
+                return getHomeTeam(team);
 
             case "time-visitante":
-                return getVisitingTeam(argument);
+                return getVisitingTeam(team);
 
             default:
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
-    private List<SoccerMatch> getAllByTeam(String argument) {
-        return matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(argument, argument);
+    private List<SoccerMatch> getAllByTeam(String team) {
+        return matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(team, team);
     }
 
-    private List<SoccerMatch> getHomeTeam(String argument) {
-        return matchRepository.findAllByHomeTeamEqualsIgnoreCase(argument);
+    private List<SoccerMatch> getHomeTeam(String team) {
+        return matchRepository.findAllByHomeTeamEqualsIgnoreCase(team);
     }
 
-    private List<SoccerMatch> getVisitingTeam(String argument) {
-        return matchRepository.findAllByVisitingTeamEqualsIgnoreCase(argument);
+    private List<SoccerMatch> getVisitingTeam(String team) {
+        return matchRepository.findAllByVisitingTeamEqualsIgnoreCase(team);
     }
 }
