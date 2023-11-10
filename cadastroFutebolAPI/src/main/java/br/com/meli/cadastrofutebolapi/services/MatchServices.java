@@ -51,6 +51,9 @@ public class MatchServices {
         Optional<SoccerMatch> response = matchRepository.findById(id);
 
         if (response.isPresent()) {
+            if (!verifyRegisterTime(matchDto)) {
+                return "Horário deve ser entre 08:00am e 22:00pm!";
+            }
             SoccerMatch newMatch = response.get();
             newMatch.setHomeTeam(matchDto.getHomeTeam());
             newMatch.setVisitingTeam(matchDto.getVisitingTeam());
