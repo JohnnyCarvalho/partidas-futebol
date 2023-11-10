@@ -30,9 +30,9 @@ public class Controller {
     }
 
     @GetMapping(value = "/{filter}")
-    public List<SoccerMatch> getByMatch(@PathVariable String filter) {
+    public ResponseEntity<List<SoccerMatch>> getByMatch(@PathVariable String filter) {
         List<SoccerMatch> response = matchServices.getFilteredByMatch(filter);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{filter}/{argument}")
