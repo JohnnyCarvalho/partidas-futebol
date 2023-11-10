@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,9 +22,10 @@ public class MatchServices {
 
     public String post(MatchDto matchDto) {
 
-        //SoccerMatch result = mapDtoToEntity(matchDto, match);
         SoccerMatch match = new SoccerMatch();
-
+        if (!verifyRegisterTime(matchDto)) {
+            return "Horário deve ser entre 08:00am e 22:00pm!";
+        }
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
         match.setDate(matchDto.getDate());
@@ -32,6 +35,15 @@ public class MatchServices {
 
         matchRepository.save(match);
         return "Partida registrada com sucesso!";
+    }
+
+    public boolean verifyRegisterTime(MatchDto matchDto) {
+
+        if ((matchDto.getDate().getHour() < 8 || (matchDto.getDate().getHour() >= 22 &&
+                (matchDto.getDate().getMinute() > 0 || matchDto.getDate().getSecond() > 0)))) {
+            return false;
+        }
+        return true;
     }
 
     public String put(Long id, MatchDto matchDto) {
