@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -40,20 +41,16 @@ public class MatchServices {
 
     }
 
-    public boolean verifyRegisterTime(MatchDto matchDto) {
-
+    public void verifyRegisterTime(MatchDto matchDto) {
         if (matchDto.getDate() != null) {
-            boolean minHourValid = matchDto.getDate().getHour() >= 8;
-            boolean maxHourValid = matchDto.getDate().getHour() <= 22;
-            boolean minuteValid = matchDto.getDate().getMinute() > 0;
-            boolean secoundValid = matchDto.getDate().getSecond() > 0;
+            LocalTime time = matchDto.getDate().toLocalTime();
 
-            if (!minHourValid || maxHourValid && (minuteValid || secoundValid)) {
+            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
             }
         }
-        return true;
     }
+
 
 
     public String put(Long id, MatchDto matchDto) {
