@@ -17,15 +17,12 @@ public class SoccerMatch {
     @Column
     private Long id;
 
-    @NotBlank(message = "O campo Home Team não pode ser nulo!")
     @Column(name = "home_team")
     private String homeTeam;
 
-    @NotBlank(message = "O campo Visiting Team não pode ser nulo!")
     @Column(name = "visiting_team")
     private String visitingTeam;
 
-    @NotBlank(message = "O campo Stadium não pode ser nulo!")
     @Column
     private String stadium;
 

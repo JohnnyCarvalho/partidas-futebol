@@ -36,15 +36,15 @@ public class Controller {
     }
 
     @GetMapping(value = "/time/{filter}/{team}")
-    public List<SoccerMatch> getByTeam(@PathVariable String filter, @PathVariable(required = false) String team) {
+    public ResponseEntity<List<SoccerMatch>> getByTeam(@PathVariable String filter, @PathVariable(required = false) String team) {
         List<SoccerMatch> response = teamServices.getFilteredByTeam(filter, team);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/estadio/{filter}/{stadium}")
-    public List<SoccerMatch> getByStadium(@PathVariable String filter, @PathVariable(required = false) String stadium) {
+    public ResponseEntity<List<SoccerMatch>> getByStadium(@PathVariable String filter, @PathVariable(required = false) String stadium) {
         List<SoccerMatch> response = stadiumServices.getFilteredByStadium(filter, stadium);
-        return new ResponseEntity<>(response, HttpStatus.OK).getBody();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
