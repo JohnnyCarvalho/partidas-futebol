@@ -3,19 +3,12 @@ package br.com.meli.cadastrofutebolapi.services;
 import br.com.meli.cadastrofutebolapi.dto.MatchDto;
 import br.com.meli.cadastrofutebolapi.entities.SoccerMatch;
 import br.com.meli.cadastrofutebolapi.repositories.MatchRepository;
-import jakarta.validation.ValidationException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,9 +70,7 @@ public class MatchServices {
         SoccerMatch match = new SoccerMatch();
         verifyRegisterTime(matchDto);
 
-        //System.out.println("Há jogos na mesma data? " + verifyByStadiumAndDay(matchDto));
         verifyByStadiumAndDay(matchDto);
-
 
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
