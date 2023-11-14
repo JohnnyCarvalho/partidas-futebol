@@ -18,9 +18,10 @@ public class MatchDto {
     @NotBlank(message = "O campo Stadium não pode ser nulo!")
     private String stadium;
 
-    @NotNull(message = "O campo Data não pode ser nulo!")
+    @NotNull
     private LocalDateTime date;
 
+    //TODO COLOCAR COMO INTEGER DEPOIS.
     private int goalsHomeTeam;
 
     private int golsClubeVisitante;

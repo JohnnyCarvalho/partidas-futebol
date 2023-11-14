@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,35 +25,6 @@ public class MatchServices {
 
     @Autowired
     private MatchRepository matchRepository;
-
-    public String post(MatchDto matchDto) {
-
-        SoccerMatch match = new SoccerMatch();
-        verifyRegisterTime(matchDto);
-
-        match.setHomeTeam(matchDto.getHomeTeam());
-        match.setVisitingTeam(matchDto.getVisitingTeam());
-        match.setDate(matchDto.getDate());
-        match.setStadium(matchDto.getStadium());
-        match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
-        match.setGoalsVisitingTeam(matchDto.getGolsClubeVisitante());
-
-        matchRepository.save(match);
-        return "Partida registrada com sucesso!";
-
-    }
-
-    public void verifyRegisterTime(MatchDto matchDto) {
-        if (matchDto.getDate() != null) {
-            LocalTime time = matchDto.getDate().toLocalTime();
-
-            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
-            }
-        }
-    }
-
-
 
     public String put(Long id, MatchDto matchDto) {
 
@@ -99,6 +72,49 @@ public class MatchServices {
         }
     }
 
+    public String post(MatchDto matchDto) {
+
+        SoccerMatch match = new SoccerMatch();
+        verifyRegisterTime(matchDto);
+
+        //System.out.println("Há jogos na mesma data? " + verifyByStadiumAndDay(matchDto));
+        verifyByStadiumAndDay(matchDto);
+
+
+        match.setHomeTeam(matchDto.getHomeTeam());
+        match.setVisitingTeam(matchDto.getVisitingTeam());
+        match.setDate(matchDto.getDate());
+        match.setStadium(matchDto.getStadium());
+        match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
+        match.setGoalsVisitingTeam(matchDto.getGolsClubeVisitante());
+
+        matchRepository.save(match);
+        return "Partida registrada com sucesso!";
+    }
+
+    private void verifyRegisterTime(MatchDto matchDto) {
+        if (matchDto.getDate() != null) {
+            LocalTime time = matchDto.getDate().toLocalTime();
+
+            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
+            }
+        }
+    }
+
+    private void verifyByStadiumAndDay(MatchDto matchDto) {
+
+        List<SoccerMatch> dateFound = matchRepository.findAllByStadiumEqualsIgnoreCase(matchDto.getStadium());
+
+        List<SoccerMatch> dataEncontrada = dateFound.stream().filter((d) ->
+             d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
+         ).toList();
+
+        if (!dataEncontrada.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo neste mesmo dia e horário!");
+        }
+    }
+
     private List<SoccerMatch> getAllMatch() {
         return matchRepository.findAll();
     }
@@ -107,7 +123,7 @@ public class MatchServices {
 
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() - list.getGoalsVisitingTeam())) >= 3
-                ).collect(Collectors.toList());
+        ).collect(Collectors.toList());
 
     }
 

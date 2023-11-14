@@ -3,6 +3,8 @@ package br.com.meli.cadastrofutebolapi.repositories;
 import br.com.meli.cadastrofutebolapi.entities.SoccerMatch;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MatchRepository extends JpaRepository<SoccerMatch, Long> {
@@ -14,5 +16,7 @@ public interface MatchRepository extends JpaRepository<SoccerMatch, Long> {
     public List<SoccerMatch> findAllByVisitingTeamEqualsIgnoreCase(String argument);
 
     public List<SoccerMatch> findAllByStadiumEqualsIgnoreCase(String argument);
+
+    //public List<SoccerMatch> findByDateAndStadiumEqualsIgnoreCase(LocalDate date, String stadium);
 
 }

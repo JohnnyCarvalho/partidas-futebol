@@ -9,10 +9,15 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Validated
 @RestController
 @RequestMapping("/partida")
@@ -64,4 +69,19 @@ public class Controller {
         String response = matchServices.delete(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExeption(MethodArgumentNotValidException ex) {
+        Map<String, String> error = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((e) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = ((FieldError) error).getDefaultMessage();
+
+            error.put(fieldName, errorMessage);
+        });
+
+        return error;
+    }
+
 }
