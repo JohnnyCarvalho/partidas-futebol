@@ -3,6 +3,7 @@ package br.com.meli.cadastrofutebolapi.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,9 @@ public class MatchDto {
     @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
-    //TODO COLOCAR COMO INTEGER DEPOIS.
-    private int goalsHomeTeam;
+    @PositiveOrZero(message = "O valor do placar deve ser >= 0!")
+    private Integer goalsHomeTeam;
 
-    private int golsClubeVisitante;
+    @PositiveOrZero(message = "O valor do placar deve ser >= 0!")
+    private Integer goalsVisitingTeam;
 }

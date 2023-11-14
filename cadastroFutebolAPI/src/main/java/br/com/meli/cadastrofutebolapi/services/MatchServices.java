@@ -26,13 +26,15 @@ public class MatchServices {
         if (response.isPresent()) {
             verifyRegisterTime(matchDto);
 
+            verifyByStadiumAndDay(matchDto);
+
             SoccerMatch newMatch = response.get();
             newMatch.setHomeTeam(matchDto.getHomeTeam());
             newMatch.setVisitingTeam(matchDto.getVisitingTeam());
             newMatch.setDate(matchDto.getDate());
             newMatch.setStadium(matchDto.getStadium());
             newMatch.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
-            newMatch.setGoalsVisitingTeam(matchDto.getGolsClubeVisitante());
+            newMatch.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
 
             matchRepository.save(newMatch);
             return "Partida atualizada com sucesso!";
@@ -77,7 +79,7 @@ public class MatchServices {
         match.setDate(matchDto.getDate());
         match.setStadium(matchDto.getStadium());
         match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
-        match.setGoalsVisitingTeam(matchDto.getGolsClubeVisitante());
+        match.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
 
         matchRepository.save(match);
         return "Partida registrada com sucesso!";
@@ -102,7 +104,7 @@ public class MatchServices {
          ).toList();
 
         if (!dataEncontrada.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo neste mesmo dia e horário!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data!");
         }
     }
 
