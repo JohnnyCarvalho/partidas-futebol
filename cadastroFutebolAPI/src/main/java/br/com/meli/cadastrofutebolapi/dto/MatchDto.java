@@ -2,6 +2,7 @@ package br.com.meli.cadastrofutebolapi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class MatchDto {
     private String stadium;
 
     @NotNull
+    @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
     //TODO COLOCAR COMO INTEGER DEPOIS.
