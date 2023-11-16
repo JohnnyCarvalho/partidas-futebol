@@ -5,7 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import org.hibernate.validator.constraints.time.DurationMax;
+import org.hibernate.validator.constraints.time.DurationMin;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,7 +24,6 @@ public class MatchDto {
     private String stadium;
 
     @NotNull
-    @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
     @PositiveOrZero(message = "O valor do placar deve ser >= 0!")

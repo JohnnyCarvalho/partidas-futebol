@@ -8,10 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class MatchServices {
@@ -74,6 +77,10 @@ public class MatchServices {
 
         verifyByStadiumAndDay(matchDto);
 
+        verifyByDayAndTeam(matchDto);
+
+        verifyByDayAndTeam(matchDto);
+
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
         match.setDate(matchDto.getDate());
@@ -105,6 +112,28 @@ public class MatchServices {
 
         if (!dataEncontrada.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data!");
+        }
+    }
+
+    private void verifyByDayAndTeam(MatchDto matchDto) {
+
+        List<SoccerMatch> team = matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(matchDto.getHomeTeam(), matchDto.getVisitingTeam());
+
+        List<LocalDateTime> dateMath = team.stream()
+                .map(SoccerMatch::getDate)
+                .collect(Collectors.toList());
+
+        LocalDateTime maxDate = dateMath.stream()
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
+        assert maxDate != null;
+        Duration durationBetweenMatches = Duration.between(maxDate, matchDto.getDate());
+
+        long hoursApart = durationBetweenMatches.toHours();
+
+        if (hoursApart < 48) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido uma partida com intervalo < 48h!");
         }
     }
 
