@@ -78,7 +78,9 @@ public class MatchServices {
 
         verifyByStadiumAndDay(matchDto);
 
-        verifyByDayAndTeam(matchDto, matchDto.getDate());
+        verifyByDayAndTeam(matchDto.getHomeTeam(), matchDto.getDate());
+
+        verifyByDayAndTeam(matchDto.getVisitingTeam(), matchDto.getDate());
 
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
@@ -114,22 +116,17 @@ public class MatchServices {
         }
     }
 
-    private void verifyByDayAndTeam(MatchDto team, LocalDateTime timeMatch) {
+    private void verifyByDayAndTeam(String team, LocalDateTime timeMatch) {
 
-        List<SoccerMatch> homeTeam = matchRepository.findAllByHomeTeamEqualsIgnoreCase(team.getHomeTeam());
-        List<SoccerMatch> visitingTeam = matchRepository.findAllByVisitingTeamEqualsIgnoreCase(team.getVisitingTeam());
+        List<SoccerMatch> teams = matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(team, team);
 
-        List<LocalDateTime> dateHomeMatch = homeTeam.stream()
-                .map(SoccerMatch::getDate)
-                .toList();
-
-        List<LocalDateTime> dateVisitingMatch = visitingTeam.stream()
+        List<LocalDateTime> dateMatch = teams.stream()
                 .map(SoccerMatch::getDate)
                 .toList();
 
         List<LocalDateTime> dateMatchAllTeams = new ArrayList<>();
-        dateMatchAllTeams.addAll(dateHomeMatch);
-        dateMatchAllTeams.addAll(dateVisitingMatch);
+
+        dateMatchAllTeams.addAll(dateMatch);
 
         dateMatchAllTeams.forEach((d) -> {
             Duration durationBetweenMatches = Duration.between(d, timeMatch).abs();
