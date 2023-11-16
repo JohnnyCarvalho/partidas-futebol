@@ -24,6 +24,7 @@ public class MatchDto {
     private String stadium;
 
     @NotNull
+    @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
     @PositiveOrZero(message = "O valor do placar deve ser >= 0!")

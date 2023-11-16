@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,9 +78,7 @@ public class MatchServices {
 
         verifyByStadiumAndDay(matchDto);
 
-        verifyByDayAndTeam(matchDto);
-
-        verifyByDayAndTeam(matchDto);
+        verifyByDayAndTeam(matchDto, matchDto.getDate());
 
         match.setHomeTeam(matchDto.getHomeTeam());
         match.setVisitingTeam(matchDto.getVisitingTeam());
@@ -115,26 +114,30 @@ public class MatchServices {
         }
     }
 
-    private void verifyByDayAndTeam(MatchDto matchDto) {
+    private void verifyByDayAndTeam(MatchDto team, LocalDateTime timeMatch) {
 
-        List<SoccerMatch> team = matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(matchDto.getHomeTeam(), matchDto.getVisitingTeam());
+        List<SoccerMatch> homeTeam = matchRepository.findAllByHomeTeamEqualsIgnoreCase(team.getHomeTeam());
+        List<SoccerMatch> visitingTeam = matchRepository.findAllByVisitingTeamEqualsIgnoreCase(team.getVisitingTeam());
 
-        List<LocalDateTime> dateMath = team.stream()
+        List<LocalDateTime> dateHomeMatch = homeTeam.stream()
                 .map(SoccerMatch::getDate)
-                .collect(Collectors.toList());
+                .toList();
 
-        LocalDateTime maxDate = dateMath.stream()
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        List<LocalDateTime> dateVisitingMatch = visitingTeam.stream()
+                .map(SoccerMatch::getDate)
+                .toList();
 
-        assert maxDate != null;
-        Duration durationBetweenMatches = Duration.between(maxDate, matchDto.getDate());
+        List<LocalDateTime> dateMatchAllTeams = new ArrayList<>();
+        dateMatchAllTeams.addAll(dateHomeMatch);
+        dateMatchAllTeams.addAll(dateVisitingMatch);
 
-        long hoursApart = durationBetweenMatches.toHours();
-
-        if (hoursApart < 48) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido uma partida com intervalo < 48h!");
-        }
+        dateMatchAllTeams.forEach((d) -> {
+            Duration durationBetweenMatches = Duration.between(d, timeMatch).abs();
+            long hoursApart = durationBetweenMatches.toHours();
+            if (hoursApart < 48) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido uma partida com intervalo < 48h!");
+            }
+        });
     }
 
     private List<SoccerMatch> getAllMatch() {

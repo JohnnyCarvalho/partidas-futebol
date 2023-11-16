@@ -69,6 +69,7 @@ public class Controller {
         String response = matchServices.delete(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExeption(MethodArgumentNotValidException ex) {
