@@ -11,11 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class MatchServices {
@@ -124,11 +122,7 @@ public class MatchServices {
                 .map(SoccerMatch::getDate)
                 .toList();
 
-        List<LocalDateTime> dateMatchAllTeams = new ArrayList<>();
-
-        dateMatchAllTeams.addAll(dateMatch);
-
-        dateMatchAllTeams.forEach((d) -> {
+        dateMatch.forEach((d) -> {
             Duration durationBetweenMatches = Duration.between(d, timeMatch).abs();
             long hoursApart = durationBetweenMatches.toHours();
             if (hoursApart < 48) {
