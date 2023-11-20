@@ -27,9 +27,26 @@ public class MatchDto {
     @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
+    @NotNull
     @PositiveOrZero(message = "O valor do placar deve ser >= 0!")
     private Integer goalsHomeTeam;
 
+    @NotNull
     @PositiveOrZero(message = "O valor do placar deve ser >= 0!")
     private Integer goalsVisitingTeam;
+
+    public MatchDto(String homeTeam, String visitingTeam, String stadium, LocalDateTime date, Integer goalsHomeTeam, Integer goalsVisitingTeam) {
+        this.homeTeam = homeTeam;
+        this.visitingTeam = visitingTeam;
+        this.stadium = stadium;
+        this.date = date;
+        this.goalsHomeTeam = goalsHomeTeam;
+        this.goalsVisitingTeam = goalsVisitingTeam;
+    }
+
+    public MatchDto() {
+    }
+
+    public MatchDto(String teamA, String teamB, String stadiumX, String string, Integer goalsHomeTeam, Integer goalsVisitingTeam) {
+    }
 }

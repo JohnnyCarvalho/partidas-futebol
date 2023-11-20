@@ -23,8 +23,6 @@ import java.util.Map;
 @RequestMapping("/partida")
 public class Controller {
 
-    //TODO TENTANDO CRIAR O FILTRO POR TIME
-
     @Autowired
     private MatchServices matchServices;
 
@@ -33,12 +31,6 @@ public class Controller {
 
     @Autowired
     private StadiumServices stadiumServices;
-
-    @GetMapping(value = "/{filter}")
-    public ResponseEntity<List<SoccerMatch>> getByMatch(@PathVariable String filter) {
-        List<SoccerMatch> response = matchServices.getFilteredByMatch(filter);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     @GetMapping(value = "/time/{filter}/{team}")
     public ResponseEntity<List<SoccerMatch>> getByTeam(@PathVariable String filter, @PathVariable(required = false) String team) {
@@ -49,6 +41,12 @@ public class Controller {
     @GetMapping(value = "/estadio/{filter}/{stadium}")
     public ResponseEntity<List<SoccerMatch>> getByStadium(@PathVariable String filter, @PathVariable(required = false) String stadium) {
         List<SoccerMatch> response = stadiumServices.getFilteredByStadium(filter, stadium);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{filter}")
+    public ResponseEntity<List<SoccerMatch>> getByMatch(@PathVariable String filter) {
+        List<SoccerMatch> response = matchServices.getFilteredByMatch(filter);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

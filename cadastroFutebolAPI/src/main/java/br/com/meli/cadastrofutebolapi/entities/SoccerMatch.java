@@ -34,4 +34,5 @@ public class SoccerMatch {
 
     @Column(name = "goals_visiting_team")
     private int goalsVisitingTeam;
+
 }

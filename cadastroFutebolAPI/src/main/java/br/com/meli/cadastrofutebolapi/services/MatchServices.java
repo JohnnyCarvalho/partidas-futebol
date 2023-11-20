@@ -53,25 +53,11 @@ public class MatchServices {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public List<SoccerMatch> getFilteredByMatch(String filter) {
-        switch (filter) {
-            case "all":
-                return getAllMatch();
-
-            case "goleada":
-                return getByThrashed();
-
-            case "zero-gols":
-                return getByZeroGoals();
-
-            default:
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-    }
-
     public String post(MatchDto matchDto) {
 
         SoccerMatch match = new SoccerMatch();
+
+        String message = null;
         verifyRegisterTime(matchDto);
 
         verifyByStadiumAndDay(matchDto);
@@ -80,18 +66,21 @@ public class MatchServices {
 
         verifyByDayAndTeam(matchDto.getVisitingTeam(), matchDto.getDate());
 
-        match.setHomeTeam(matchDto.getHomeTeam());
-        match.setVisitingTeam(matchDto.getVisitingTeam());
-        match.setDate(matchDto.getDate());
-        match.setStadium(matchDto.getStadium());
-        match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
-        match.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
+        if (matchDto.getGoalsHomeTeam() != null && matchDto.getGoalsVisitingTeam() != null) {
+            match.setHomeTeam(matchDto.getHomeTeam());
+            match.setVisitingTeam(matchDto.getVisitingTeam());
+            match.setDate(matchDto.getDate());
+            match.setStadium(matchDto.getStadium());
+            match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
+            match.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
 
-        matchRepository.save(match);
-        return "Partida registrada com sucesso!";
+            matchRepository.save(match);
+            message = "Partida registrada com sucesso!";
+        }
+        return  message;
     }
 
-    private void verifyRegisterTime(MatchDto matchDto) {
+    public void verifyRegisterTime(MatchDto matchDto) {
         if (matchDto.getDate() != null) {
             LocalTime time = matchDto.getDate().toLocalTime();
 
@@ -101,20 +90,20 @@ public class MatchServices {
         }
     }
 
-    private void verifyByStadiumAndDay(MatchDto matchDto) {
+    public void verifyByStadiumAndDay(MatchDto matchDto) {
 
         List<SoccerMatch> dateFound = matchRepository.findAllByStadiumEqualsIgnoreCase(matchDto.getStadium());
 
         List<SoccerMatch> dataEncontrada = dateFound.stream().filter((d) ->
-             d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
-         ).toList();
+                d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
+        ).toList();
 
         if (!dataEncontrada.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data!");
         }
     }
 
-    private void verifyByDayAndTeam(String team, LocalDateTime timeMatch) {
+    public void verifyByDayAndTeam(String team, LocalDateTime timeMatch) {
 
         List<SoccerMatch> teams = matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(team, team);
 
@@ -131,11 +120,27 @@ public class MatchServices {
         });
     }
 
-    private List<SoccerMatch> getAllMatch() {
+    public List<SoccerMatch> getFilteredByMatch(String filter) {
+        switch (filter) {
+            case "all":
+                return getAllMatch();
+
+            case "goleada":
+                return getByThrashed();
+
+            case "zero-gols":
+                return getByZeroGoals();
+
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<SoccerMatch> getAllMatch() {
         return matchRepository.findAll();
     }
 
-    private List<SoccerMatch> getByThrashed() {
+    public List<SoccerMatch> getByThrashed() {
 
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() - list.getGoalsVisitingTeam())) >= 3
@@ -143,7 +148,7 @@ public class MatchServices {
 
     }
 
-    private List<SoccerMatch> getByZeroGoals() {
+    public List<SoccerMatch> getByZeroGoals() {
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() + list.getGoalsVisitingTeam())) == 0
         ).collect(Collectors.toList());
