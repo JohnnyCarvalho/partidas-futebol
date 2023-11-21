@@ -57,7 +57,6 @@ public class MatchServices {
 
         SoccerMatch match = new SoccerMatch();
 
-        String message = null;
         verifyRegisterTime(matchDto);
 
         verifyByStadiumAndDay(matchDto);
@@ -66,18 +65,15 @@ public class MatchServices {
 
         verifyByDayAndTeam(matchDto.getVisitingTeam(), matchDto.getDate());
 
-        if (matchDto.getGoalsHomeTeam() != null && matchDto.getGoalsVisitingTeam() != null) {
-            match.setHomeTeam(matchDto.getHomeTeam());
-            match.setVisitingTeam(matchDto.getVisitingTeam());
-            match.setDate(matchDto.getDate());
-            match.setStadium(matchDto.getStadium());
-            match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
-            match.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
+        match.setHomeTeam(matchDto.getHomeTeam());
+        match.setVisitingTeam(matchDto.getVisitingTeam());
+        match.setDate(matchDto.getDate());
+        match.setStadium(matchDto.getStadium());
+        match.setGoalsHomeTeam(matchDto.getGoalsHomeTeam());
+        match.setGoalsVisitingTeam(matchDto.getGoalsVisitingTeam());
 
-            matchRepository.save(match);
-            message = "Partida registrada com sucesso!";
-        }
-        return  message;
+        matchRepository.save(match);
+        return "Partida registrada com sucesso!";
     }
 
     public void verifyRegisterTime(MatchDto matchDto) {
@@ -99,7 +95,7 @@ public class MatchServices {
         ).toList();
 
         if (!dataEncontrada.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data para este estádio!");
         }
     }
 
@@ -132,7 +128,7 @@ public class MatchServices {
                 return getByZeroGoals();
 
             default:
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partida não encontrada!");
         }
     }
 

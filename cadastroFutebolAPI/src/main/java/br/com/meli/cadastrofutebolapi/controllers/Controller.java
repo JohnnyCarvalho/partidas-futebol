@@ -66,6 +66,7 @@ public class Controller {
     public ResponseEntity<String> deleteMatchById(@PathVariable Long id) {
         String response = matchServices.delete(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
