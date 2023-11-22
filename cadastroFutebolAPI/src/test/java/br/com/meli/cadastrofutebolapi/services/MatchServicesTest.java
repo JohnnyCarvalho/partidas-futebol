@@ -11,12 +11,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,62 +63,82 @@ class MatchServicesTest {
     }
 
 
-//
-//    // TESTS FOR DELETE METHOD
-//    @Test
-//    void searchByIdToDeleteMatchSuccess() {
-//        when(matchRepository.existsById(idExisting)).thenReturn(true);
-//    }
-//
-//    @Test
-//    void searchByIdToDeleteMatchUnknownId() {
-//        when(matchRepository.existsById(idNonExisting)).thenReturn(false);
-//    }
-//
-//    @Test
-//    void deleteMatchSuccess() {
-//        if (matchRepository.existsById(idExisting)) {
-//
-//            doNothing().when(matchRepository).deleteById(idExisting);
-//
-//            matchServices.delete(idExisting);
-//
-//            verify(matchRepository).deleteById(idExisting);
-//
-//            verifyNoMoreInteractions(matchRepository);
-//        }
-//    }
-//
-//    @Test
-//    void searchByIdToDeleteMatchUnknownIdException() {
-//        assertThrows(ResponseStatusException.class, () -> matchServices.delete(idNonExisting));
-//    }
-//
-//    // TESTS FOR POST METHOD
-//
-//    @Test
-//    void postNewMatchReturnMessageTest() {
-//        SoccerMatch match = new SoccerMatch();
-//        when(matchRepository.save(match)).thenReturn(match);
-//    }
-//
-//    @Test
-//    void verifyRegisterTimeTest() {
-//
-//    }
-//
-//    @Test
-//    void verifyRegisterTimeTestUnknownIdException() {
-//
-//    }
-//
-//    @Test
-//    void verifyByStadiumAndDayTest() {
-//
-//    }
-//
-//    @Test
-//    void verifyByDayAndTeamTest() {
-//
-//    }
+    // TESTS FOR DELETE METHOD
+    @Test
+    void deleteByIdMatchSuccess() {
+        when(matchRepository.existsById(idExisting)).thenReturn(true);
+        doNothing().when(matchRepository).deleteById(idExisting);
+
+        String response = matchServices.delete(idExisting);
+
+        assertEquals("Partida deletada com sucesso!", response);
+        verify(matchRepository).existsById(idExisting);
+        verify(matchRepository).deleteById(idExisting);
+        verifyNoMoreInteractions(matchRepository);
+    }
+
+    @Test
+    void searchByIdToDeleteMatchUnknownIdException() {
+        MatchDto matchDto = new MatchDto("TeamC", "TeamD", "StadiumX", LocalDateTime.now(), 3, 2);
+
+        assertThrows(ResponseStatusException.class, () -> matchServices.put(idNonExisting, matchDto));
+
+        verify(matchRepository).findById(idNonExisting);
+        verify(matchRepository, never()).delete(any());
+    }
+
+
+//    TESTS FOR POST METHOD
+    @Test
+    void postMatchTestSuccess() {
+        MatchDto matchDto = new MatchDto("Team1", "Team2", "StadiumX", LocalDateTime.now(), 3, 2);
+
+        when(matchRepository.findAllByStadiumEqualsIgnoreCase("StadiumX")).thenReturn(Collections.emptyList());
+        when(matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(anyString(), anyString())).thenReturn(Collections.emptyList());
+
+        String response = matchServices.post(matchDto);
+
+        verify(matchRepository).findAllByStadiumEqualsIgnoreCase("StadiumX");
+        verify(matchRepository, times(2)).findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(anyString(), anyString());
+        verify(matchRepository).save(any());
+
+        assertEquals("Partida registrada com sucesso!", response);
+    }
+
+    @Test
+    void postMatchTestError() {
+        MatchDto matchDtoTimeMin = new MatchDto("Team1", "Team2", "StadiumX", LocalDateTime.of(2023, 11, 20, 7, 59), 3, 2);
+        MatchDto matchDtoTimeMax = new MatchDto("Team1", "Team2", "StadiumX", LocalDateTime.of(2023, 11, 20, 22, 1), 3, 2);
+        MatchDto matchDtoVerifyByStadiumAndDay = new MatchDto("Team1", "Team2", "StadiumX", LocalDateTime.now(), 3, 2);
+        MatchDto matchDtoVerifyByDayAndTeam = new MatchDto("Team1", "Team2", "StadiumX", LocalDateTime.now(), 3, 2);
+
+        MatchServices matchServicesMock = mock(MatchServices.class);
+
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!")).when(matchServicesMock).post(matchDtoTimeMin);
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!")).when(matchServicesMock).post(matchDtoTimeMax);
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data para este estádio!")).when(matchServicesMock).post(matchDtoVerifyByStadiumAndDay);
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido uma partida com intervalo < 48h!")).when(matchServicesMock).post(matchDtoVerifyByDayAndTeam);
+
+
+    }
+
+    @Test
+    void verifyRegisterTimeTest() {
+
+    }
+
+    @Test
+    void verifyRegisterTimeTestUnknownIdException() {
+
+    }
+
+    @Test
+    void verifyByStadiumAndDayTest() {
+
+    }
+
+    @Test
+    void verifyByDayAndTeamTest() {
+
+    }
 }

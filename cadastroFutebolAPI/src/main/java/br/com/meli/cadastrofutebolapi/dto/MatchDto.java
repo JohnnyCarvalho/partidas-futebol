@@ -38,5 +38,4 @@ public class MatchDto {
     @NotNull(message = "Os campos gols deve conter valores >= 0!")
     @PositiveOrZero(message = "O valor do placar deve ser >= 0!")
     private Integer goalsVisitingTeam;
-
 }
