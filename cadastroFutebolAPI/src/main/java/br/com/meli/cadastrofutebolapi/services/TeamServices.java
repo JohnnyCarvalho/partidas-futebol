@@ -27,7 +27,7 @@ public class TeamServices {
                 return getVisitingTeam(team);
 
             default:
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Time não encontrado!");
         }
     }
 

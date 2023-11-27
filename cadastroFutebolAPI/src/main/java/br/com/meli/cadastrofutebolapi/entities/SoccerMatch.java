@@ -3,13 +3,17 @@ package br.com.meli.cadastrofutebolapi.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
 public class SoccerMatch {
 
     @Id
@@ -34,4 +38,5 @@ public class SoccerMatch {
 
     @Column(name = "goals_visiting_team")
     private int goalsVisitingTeam;
+
 }

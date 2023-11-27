@@ -23,7 +23,7 @@ public class StadiumServices {
                 return getByStadium(stadium);
 
             default:
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Filtro de busca não encontrado!");
         }
     }
 

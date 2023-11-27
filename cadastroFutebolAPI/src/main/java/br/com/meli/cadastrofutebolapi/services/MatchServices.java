@@ -30,6 +30,10 @@ public class MatchServices {
 
             verifyByStadiumAndDay(matchDto);
 
+            verifyByDayAndTeam(matchDto.getHomeTeam(), matchDto.getDate());
+
+            verifyByDayAndTeam(matchDto.getVisitingTeam(), matchDto.getDate());
+
             SoccerMatch newMatch = response.get();
             newMatch.setHomeTeam(matchDto.getHomeTeam());
             newMatch.setVisitingTeam(matchDto.getVisitingTeam());
@@ -41,7 +45,7 @@ public class MatchServices {
             matchRepository.save(newMatch);
             return "Partida atualizada com sucesso!";
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não existe nenhuma partida com esse ID!");
     }
 
     public String delete(Long id) {
@@ -50,28 +54,13 @@ public class MatchServices {
             matchRepository.deleteById(id);
             return "Partida deletada com sucesso!";
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-
-    public List<SoccerMatch> getFilteredByMatch(String filter) {
-        switch (filter) {
-            case "all":
-                return getAllMatch();
-
-            case "goleada":
-                return getByThrashed();
-
-            case "zero-gols":
-                return getByZeroGoals();
-
-            default:
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse id não existe!");
     }
 
     public String post(MatchDto matchDto) {
 
         SoccerMatch match = new SoccerMatch();
+
         verifyRegisterTime(matchDto);
 
         verifyByStadiumAndDay(matchDto);
@@ -92,12 +81,14 @@ public class MatchServices {
     }
 
     private void verifyRegisterTime(MatchDto matchDto) {
-        if (matchDto.getDate() != null) {
-            LocalTime time = matchDto.getDate().toLocalTime();
+        if (matchDto.getDate() == null) {
+            throw new IllegalArgumentException("A data não pode ser nula");
+        }
 
-            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
-            }
+        LocalTime time = matchDto.getDate().toLocalTime();
+
+        if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
         }
     }
 
@@ -105,12 +96,12 @@ public class MatchServices {
 
         List<SoccerMatch> dateFound = matchRepository.findAllByStadiumEqualsIgnoreCase(matchDto.getStadium());
 
-        List<SoccerMatch> dataEncontrada = dateFound.stream().filter((d) ->
-             d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
-         ).toList();
+        List<SoccerMatch> dateNotFound = dateFound.stream().filter((d) ->
+                d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
+        ).toList();
 
-        if (!dataEncontrada.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data!");
+        if (!dateNotFound.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data para este estádio!");
         }
     }
 
@@ -131,22 +122,36 @@ public class MatchServices {
         });
     }
 
-    private List<SoccerMatch> getAllMatch() {
+    public List<SoccerMatch> getFilteredByMatch(String filter) {
+        switch (filter) {
+            case "all":
+                return getAllMatch();
+
+            case "goleada":
+                return getByThrashed();
+
+            case "zero-gols":
+                return getByZeroGoals();
+
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partida não encontrada!");
+        }
+    }
+
+    public List<SoccerMatch> getAllMatch() {
         return matchRepository.findAll();
     }
 
-    private List<SoccerMatch> getByThrashed() {
+    public List<SoccerMatch> getByThrashed() {
 
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() - list.getGoalsVisitingTeam())) >= 3
         ).collect(Collectors.toList());
-
     }
 
-    private List<SoccerMatch> getByZeroGoals() {
+    public List<SoccerMatch> getByZeroGoals() {
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() + list.getGoalsVisitingTeam())) == 0
         ).collect(Collectors.toList());
     }
-
 }
