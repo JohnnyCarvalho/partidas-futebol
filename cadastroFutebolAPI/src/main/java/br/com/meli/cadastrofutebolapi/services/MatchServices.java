@@ -30,6 +30,10 @@ public class MatchServices {
 
             verifyByStadiumAndDay(matchDto);
 
+            verifyByDayAndTeam(matchDto.getHomeTeam(), matchDto.getDate());
+
+            verifyByDayAndTeam(matchDto.getVisitingTeam(), matchDto.getDate());
+
             SoccerMatch newMatch = response.get();
             newMatch.setHomeTeam(matchDto.getHomeTeam());
             newMatch.setVisitingTeam(matchDto.getVisitingTeam());
@@ -41,7 +45,7 @@ public class MatchServices {
             matchRepository.save(newMatch);
             return "Partida atualizada com sucesso!";
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não existe nenhuma partida com esse ID!");
     }
 
     public String delete(Long id) {
@@ -50,7 +54,7 @@ public class MatchServices {
             matchRepository.deleteById(id);
             return "Partida deletada com sucesso!";
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse id não existe!");
     }
 
     public String post(MatchDto matchDto) {
@@ -76,30 +80,32 @@ public class MatchServices {
         return "Partida registrada com sucesso!";
     }
 
-    public void verifyRegisterTime(MatchDto matchDto) {
-        if (matchDto.getDate() != null) {
-            LocalTime time = matchDto.getDate().toLocalTime();
+    private void verifyRegisterTime(MatchDto matchDto) {
+        if (matchDto.getDate() == null) {
+            throw new IllegalArgumentException("A data não pode ser nula");
+        }
 
-            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
-            }
+        LocalTime time = matchDto.getDate().toLocalTime();
+
+        if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(22, 0))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário deve ser entre 08:00am e 22:00pm!");
         }
     }
 
-    public void verifyByStadiumAndDay(MatchDto matchDto) {
+    private void verifyByStadiumAndDay(MatchDto matchDto) {
 
         List<SoccerMatch> dateFound = matchRepository.findAllByStadiumEqualsIgnoreCase(matchDto.getStadium());
 
-        List<SoccerMatch> dataEncontrada = dateFound.stream().filter((d) ->
+        List<SoccerMatch> dateNotFound = dateFound.stream().filter((d) ->
                 d.getDate().toLocalDate().equals(matchDto.getDate().toLocalDate())
         ).toList();
 
-        if (!dataEncontrada.isEmpty()) {
+        if (!dateNotFound.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um jogo nesta mesma data para este estádio!");
         }
     }
 
-    public void verifyByDayAndTeam(String team, LocalDateTime timeMatch) {
+    private void verifyByDayAndTeam(String team, LocalDateTime timeMatch) {
 
         List<SoccerMatch> teams = matchRepository.findAllByHomeTeamOrVisitingTeamEqualsIgnoreCase(team, team);
 
@@ -141,7 +147,6 @@ public class MatchServices {
         return matchRepository.findAll().stream().filter(list ->
                 Math.abs((list.getGoalsHomeTeam() - list.getGoalsVisitingTeam())) >= 3
         ).collect(Collectors.toList());
-
     }
 
     public List<SoccerMatch> getByZeroGoals() {
@@ -149,5 +154,4 @@ public class MatchServices {
                 Math.abs((list.getGoalsHomeTeam() + list.getGoalsVisitingTeam())) == 0
         ).collect(Collectors.toList());
     }
-
 }

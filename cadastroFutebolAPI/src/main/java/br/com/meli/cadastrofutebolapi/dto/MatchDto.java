@@ -27,7 +27,7 @@ public class MatchDto {
     @NotBlank(message = "O campo Stadium não pode ser nulo!")
     private String stadium;
 
-    @NotNull
+    //@NotNull
     @PastOrPresent(message = "A data do jogo não pode ser no futuro!")
     private LocalDateTime date;
 
