@@ -1,15 +1,21 @@
 package br.com.meli.cadastrofutebolapi.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
 @Entity
+@Data
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
 public class SoccerMatch {
 
     @Id
@@ -34,4 +40,5 @@ public class SoccerMatch {
 
     @Column(name = "goals_visiting_team")
     private int goalsVisitingTeam;
+
 }
